@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from icorner_ynab_sync.token_manager import TokenManager
 
@@ -18,8 +19,13 @@ class ICornerTransactionLog:
         _ = self.session.post("https://www.icorner.ch/cop-ch/", data=self.login_data)
         print("Waiting for token")
         token = None
+        counter = 0
         while token is None:
+            if counter > 30:
+                return
             token = self.token_manager.consume()
+            time.sleep(5)
+            counter += 1
         print(f"SMS Token {token}")
         _ = self.session.post(
             "https://www.icorner.ch/cop-ch/",

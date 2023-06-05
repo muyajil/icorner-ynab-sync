@@ -9,7 +9,8 @@ YNAB_TRANSACTION_LOG = YNABTransactionLog()
 
 
 def run_sync() -> None:
-    ICORNER_TRANSACTION_LOG.login()
+    while not ICORNER_TRANSACTION_LOG.logged_in:
+        ICORNER_TRANSACTION_LOG.login()
     n = 0
     for transaction in ICORNER_TRANSACTION_LOG.yield_transactions():
         t = {
@@ -36,4 +37,4 @@ if __name__ == "__main__":
     time.sleep(20)
     while True:
         run_sync()
-        time.sleep(60 * 15)
+        time.sleep(60 * 60 * 6)
