@@ -1,0 +1,15 @@
+services:
+  icorner_ynab_sync:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: muyajil/icorner_ynab_sync:latest
+    container_name: icorner_ynab_sync
+    ports:
+      - 8000:8000
+    environment:
+      YNAB_API_KEY: ${YNAB_API_KEY}
+      YNAB_BUDGET_ID: ${YNAB_BUDGET_ID}
+      YNAB_ACCOUNT_ID: ${YNAB_ACCOUNT_ID}
+      ICORNER_USERNAME: ${ICORNER_USERNAME}
+      ICORNER_PASSWORD: ${ICORNER_PASSWORD}
