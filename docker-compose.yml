@@ -1,7 +1,7 @@
 services:
   icorner_ynab_sync:
+    platform: linux/amd64
     build:
-      platform: linux/amd64
       context: .
       dockerfile: Dockerfile
     image: muyajil/icorner_ynab_sync:latest
