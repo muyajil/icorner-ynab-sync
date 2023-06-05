@@ -33,7 +33,7 @@ if __name__ == "__main__":
     subprocess.Popen(
         ["uvicorn", "--host", "0.0.0.0", "icorner_ynab_sync.sms_receiver:app"]
     )
-    time.sleep()
+    time.sleep(20)
     while True:
         run_sync()
         time.sleep(60 * 15)
