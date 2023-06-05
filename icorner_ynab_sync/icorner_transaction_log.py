@@ -38,9 +38,10 @@ class ICornerTransactionLog:
         hasMore = True
         while hasMore:
             r = self.session.get(
-                f"https://www.icorner.ch/services/bff/accounts/2106440270/transactions?page={page}&rows=100"
+                f"https://www.icorner.ch/services/bff/accounts/{os.environ['ICORNER_ACCOUNT']}/transactions?page={page}&rows=100"
             )
             r.raise_for_status()
+            print(r.text)
             data = r.json()
 
             for transaction in data["transactions"]:

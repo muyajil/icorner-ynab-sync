@@ -1,8 +1,9 @@
 from datetime import datetime
-import subprocess
+import uvicorn
 import time
 from icorner_ynab_sync.icorner_transaction_log import ICornerTransactionLog
 from icorner_ynab_sync.ynab_transaction_log import YNABTransactionLog
+from icorner_ynab_sync.sms_receiver import app
 
 ICORNER_TRANSACTION_LOG = ICornerTransactionLog()
 YNAB_TRANSACTION_LOG = YNABTransactionLog()
@@ -30,9 +31,8 @@ def run_sync() -> None:
 
 
 if __name__ == "__main__":
-    subprocess.Popen(
-        ["uvicorn", "--host", "0.0.0.0", "icorner_ynab_sync.sms_receiver:app"]
-    )
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+    time.sleep(20)
     while True:
         run_sync()
         time.sleep(60 * 15)
