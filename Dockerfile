@@ -6,4 +6,4 @@ COPY ./ /app
 
 RUN pip install -e /app
 ENV PYTHONUNBUFFERED=1
-ENTRYPOINT [ "python", "-m", "icorner_ynab_sync.main" ]
+ENTRYPOINT [ "python", "/app/icorner_ynab_sync/main.py" ]

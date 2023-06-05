@@ -20,8 +20,7 @@ class ICornerTransactionLog:
         token = None
         while token is None:
             token = self.token_manager.consume()
-        print("Got token")
-
+        print(f"SMS Token {token}")
         _ = self.session.post(
             "https://www.icorner.ch/cop-ch/",
             data={
@@ -41,7 +40,6 @@ class ICornerTransactionLog:
                 f"https://www.icorner.ch/services/bff/accounts/{os.environ['ICORNER_ACCOUNT']}/transactions?page={page}&rows=100"
             )
             r.raise_for_status()
-            print(r.text)
             data = r.json()
 
             for transaction in data["transactions"]:
