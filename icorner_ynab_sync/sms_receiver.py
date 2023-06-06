@@ -10,4 +10,6 @@ async def set_token(payload: dict):
     t = payload["message"][:6]
     if t.isdigit():
         tm.set_token(t)
-    return {"token": t}
+        return {"token": t}
+    else:
+        return {"error": "invalid token"}
