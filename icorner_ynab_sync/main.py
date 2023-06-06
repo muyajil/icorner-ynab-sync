@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import subprocess
 import traceback
 import time
@@ -51,4 +51,6 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
             print(traceback.format_exc())
+        next_execution = datetime.now() + timedelta(hours=1)
+        print(f"Next execution at {next_execution}")
         time.sleep(60 * 60 * 1)
