@@ -5,15 +5,13 @@ import time
 from icorner_ynab_sync.icorner_transaction_log import ICornerTransactionLog
 from icorner_ynab_sync.ynab_transaction_log import YNABTransactionLog
 
-ICORNER_TRANSACTION_LOG = ICornerTransactionLog()
-YNAB_TRANSACTION_LOG = YNABTransactionLog()
-
 
 def run_sync() -> None:
-    while not ICORNER_TRANSACTION_LOG.logged_in:
-        ICORNER_TRANSACTION_LOG.login()
+    icorner_transaction_log = ICornerTransactionLog()
+    while not icorner_transaction_log.logged_in:
+        icorner_transaction_log.login()
     n = 0
-    for transaction in ICORNER_TRANSACTION_LOG.yield_transactions():
+    for transaction in icorner_transaction_log.yield_transactions():
         amount = int(float(transaction["amount"]) * 1000)
         merchant = transaction["merchant"] if "merchant" in transaction else "Cornercard"
         # TODO: Check what happens with EUR transactions that are settled
@@ -35,7 +33,7 @@ def run_sync() -> None:
             t["cleared"] = "cleared"
         if transaction["currency"] != "CHF":
             t["memo"] = f"Currency: {transaction['currency']}"
-        YNAB_TRANSACTION_LOG.update_or_create(t)
+        YNABTransactionLog().update_or_create(t)
         n += 1
     print(f"Synced {n} transactions")
 
