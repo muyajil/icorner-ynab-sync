@@ -18,6 +18,7 @@ class ICornerTransactionLog:
     def login(self) -> None:
         _ = self.session.post("https://www.icorner.ch/cop-ch/", data=self.login_data)
         print("Waiting for token")
+        self.token_manager.wait_for_token()
         token = None
         counter = 0
         while token is None:
@@ -43,7 +44,11 @@ class ICornerTransactionLog:
         hasMore = True
         while hasMore:
             r = self.session.get(
-                f"https://www.icorner.ch/services/bff/accounts/{os.environ['ICORNER_ACCOUNT']}/transactions?page={page}&rows=100"
+                (
+                    "https://www.icorner.ch/services/bff/accounts/"
+                    f"{os.environ['ICORNER_ACCOUNT']}"
+                    f"/transactions?page={page}&rows=100"
+                )
             )
             r.raise_for_status()
             data = r.json()

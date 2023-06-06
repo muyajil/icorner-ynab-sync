@@ -13,13 +13,26 @@ def run_sync() -> None:
         ICORNER_TRANSACTION_LOG.login()
     n = 0
     for transaction in ICORNER_TRANSACTION_LOG.yield_transactions():
+        amount = int(float(transaction["amount"]) * 1000)
+        date = datetime.strptime(transaction["date"], "%Y%m%d").strftime("%Y-%m-%d")
+        # TODO: Check what happens with EUR transactions that are settled
+        import_id = (
+            "icorner:v3:"
+            + transaction["lastCardDigit"]
+            + ":"
+            + date
+            + ":"
+            + transaction["merchant"][:5].lower()
+            + ":"
+            + str(amount)
+        )
         t = {
-            "import_id": "icorner:v2:" + transaction["id"],
-            "date": datetime.strptime(transaction["date"], "%Y%m%d").strftime(
-                "%Y-%m-%d"
-            ),
-            "payee_name": transaction["merchant"] if "merchant" in transaction else "Cornercard",
-            "amount": -int(float(transaction["amount"]) * 1000),
+            "import_id": import_id,
+            "date": date,
+            "payee_name": transaction["merchant"]
+            if "merchant" in transaction
+            else "Cornercard",
+            "amount": -amount,
         }
         if transaction["status"] == "SETTLED":
             t["cleared"] = "cleared"
