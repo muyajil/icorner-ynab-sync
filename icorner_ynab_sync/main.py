@@ -13,19 +13,32 @@ def run_sync() -> None:
     n = 0
     for transaction in icorner_transaction_log.yield_transactions():
         amount = int(float(transaction["amount"]) * 1000)
-        merchant = transaction["merchant"] if "merchant" in transaction else "Cornercard"
-        # TODO: Check what happens with EUR transactions that are settled
-        import_id = (
-            "ico:v3:"
-            + transaction["date"]
-            + ":"
-            + merchant[:5].lower()
-            + ":"
-            + str(amount)
+        merchant = (
+            transaction["merchant"] if "merchant" in transaction else "Cornercard"
         )
+        if "originalAmount" in transaction:
+            import_id = (
+                "ico:v3:"
+                + transaction["date"]
+                + ":"
+                + merchant[:5].lower()
+                + ":"
+                + str(int(float(transaction["originalAmount"]) * 1000))
+            )
+        else:
+            import_id = (
+                "ico:v3:"
+                + transaction["date"]
+                + ":"
+                + merchant[:5].lower()
+                + ":"
+                + str(amount)
+            )
         t = {
             "import_id": import_id,
-            "date": datetime.strptime(transaction["date"], "%Y%m%d").strftime("%Y-%m-%d"),
+            "date": datetime.strptime(transaction["date"], "%Y%m%d").strftime(
+                "%Y-%m-%d"
+            ),
             "payee_name": merchant,
             "amount": -amount,
         }
@@ -33,6 +46,11 @@ def run_sync() -> None:
             t["cleared"] = "cleared"
         if transaction["currency"] != "CHF":
             t["memo"] = f"Currency: {transaction['currency']}"
+        if "originalAmount" in transaction:
+            t[
+                "memo"
+            ] = f"Original amount: {float(transaction['originalAmount'])} {transaction['originalCurrency']}"
+        print(t)
         YNABTransactionLog().update_or_create(t)
         n += 1
     print(f"Synced {n} transactions")
