@@ -1,5 +1,6 @@
 from datetime import datetime
 import subprocess
+import traceback
 import time
 from icorner_ynab_sync.icorner_transaction_log import ICornerTransactionLog
 from icorner_ynab_sync.ynab_transaction_log import YNABTransactionLog
@@ -14,21 +15,20 @@ def run_sync() -> None:
     n = 0
     for transaction in ICORNER_TRANSACTION_LOG.yield_transactions():
         amount = int(float(transaction["amount"]) * 1000)
+        merchant = transaction["merchant"] if "merchant" in transaction else "Cornercard"
         # TODO: Check what happens with EUR transactions that are settled
         import_id = (
             "ico:v3:"
             + transaction["date"]
             + ":"
-            + transaction["merchant"][:5].lower()
+            + merchant[:5].lower()
             + ":"
             + str(amount)
         )
         t = {
             "import_id": import_id,
             "date": datetime.strptime(transaction["date"], "%Y%m%d").strftime("%Y-%m-%d"),
-            "payee_name": transaction["merchant"]
-            if "merchant" in transaction
-            else "Cornercard",
+            "payee_name": merchant,
             "amount": -amount,
         }
         if transaction["status"] == "SETTLED":
@@ -50,4 +50,5 @@ if __name__ == "__main__":
             run_sync()
         except Exception as e:
             print(e)
+            print(traceback.format_exc())
         time.sleep(60 * 60 * 6)
