@@ -36,5 +36,8 @@ if __name__ == "__main__":
     )
     time.sleep(20)
     while True:
-        run_sync()
+        try:
+            run_sync()
+        except Exception as e:
+            print(e)
         time.sleep(60 * 60 * 6)
