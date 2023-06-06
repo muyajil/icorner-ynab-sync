@@ -8,4 +8,6 @@ tm = TokenManager()
 @app.post("/")
 async def set_token(payload: dict):
     t = payload["message"][:6]
-    tm.set_token(t)
+    if t.isdigit():
+        tm.set_token(t)
+    return {"token": t}
