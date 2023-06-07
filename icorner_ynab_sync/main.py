@@ -49,7 +49,7 @@ def run_sync() -> None:
         if "originalAmount" in transaction:
             t[
                 "memo"
-            ] = f"Original amount: {float(transaction['originalAmount'])} {transaction['originalCurrency']}"
+            ] = f"Original amount: {float(transaction['originalAmount']):.2f} {transaction['originalCurrency']}"
         print(t)
         YNABTransactionLog().update_or_create(t)
         n += 1
