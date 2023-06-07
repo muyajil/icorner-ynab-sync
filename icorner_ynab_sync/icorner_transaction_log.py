@@ -22,11 +22,12 @@ class ICornerTransactionLog:
         token = None
         counter = 0
         while token is None:
-            if counter > 30:
-                return
             token = self.token_manager.consume()
             time.sleep(5)
             counter += 1
+        if counter > 36:
+            print(f"Token {token} is too old.")
+            return
         print(f"SMS Token {token}")
         _ = self.session.post(
             "https://www.icorner.ch/cop-ch/",
