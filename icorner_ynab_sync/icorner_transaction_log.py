@@ -25,6 +25,9 @@ class ICornerTransactionLog:
             token = self.token_manager.consume()
             time.sleep(5)
             counter += 1
+            if counter > 720:
+                print("No token arrived in 1h sec, starting a new login flow.")
+                return
         if counter > 36:
             print(f"Token {token} is too old.")
             return
