@@ -67,6 +67,7 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
             print(traceback.format_exc())
-        next_execution = datetime.now() + timedelta(hours=1)
+        SLEEP_HOURS = 6
+        next_execution = datetime.now() + timedelta(hours=SLEEP_HOURS)
         print(f"Next execution at {next_execution}")
-        time.sleep(60 * 60 * 6)
+        time.sleep(60 * 60 * SLEEP_HOURS)
