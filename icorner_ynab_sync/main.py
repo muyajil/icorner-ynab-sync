@@ -69,4 +69,4 @@ if __name__ == "__main__":
             print(traceback.format_exc())
         next_execution = datetime.now() + timedelta(hours=1)
         print(f"Next execution at {next_execution}")
-        time.sleep(60 * 60 * 1)
+        time.sleep(60 * 60 * 6)
