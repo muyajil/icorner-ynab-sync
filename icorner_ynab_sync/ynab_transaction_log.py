@@ -1,5 +1,6 @@
 import os
 import requests
+from requests.adapters import HTTPAdapter, Retry
 
 
 class YNABTransactionLog:
@@ -9,6 +10,17 @@ class YNABTransactionLog:
         self.account_id = os.environ["YNAB_ACCOUNT_ID"]
         self.session.headers.update(
             {"Authorization": f"Bearer {os.environ['YNAB_API_KEY']}"}
+        )
+        self.session.mount(
+            "https://",
+            HTTPAdapter(
+                max_retries=Retry(
+                    total=5,
+                    backoff_factor=1,
+                    status_forcelist=[429],
+                    allowed_methods=["GET", "POST", "PATCH"],
+                )
+            ),
         )
 
     def create_transaction(self, transaction: dict) -> None:
