@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
-RUN pip install requests fastapi uvicorn
+RUN pip install requests fastapi uvicorn requests-ratelimiter
+
 
 COPY ./ /app
 

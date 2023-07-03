@@ -1,6 +1,5 @@
 import os
 import requests
-from requests.adapters import HTTPAdapter, Retry
 from requests_ratelimiter import LimiterAdapter
 
 
