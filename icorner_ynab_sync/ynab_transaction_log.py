@@ -1,6 +1,7 @@
 import os
 import requests
 from requests.adapters import HTTPAdapter, Retry
+from requests_ratelimiter import LimiterAdapter
 
 
 class YNABTransactionLog:
@@ -11,17 +12,13 @@ class YNABTransactionLog:
         self.session.headers.update(
             {"Authorization": f"Bearer {os.environ['YNAB_API_KEY']}"}
         )
-        self.session.mount(
-            "https://",
-            HTTPAdapter(
-                max_retries=Retry(
-                    total=5,
-                    backoff_factor=1,
-                    status_forcelist=[429],
-                    allowed_methods=["GET", "POST", "PATCH"],
-                )
-            ),
+        adapter = LimiterAdapter(
+            per_hour=200,
+            status_forcelist=[429],
+            allowed_methods=["GET", "POST", "PATCH"],
         )
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
     def create_transaction(self, transaction: dict) -> None:
         r = self.session.post(
