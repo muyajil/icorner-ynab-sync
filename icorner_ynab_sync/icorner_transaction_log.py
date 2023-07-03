@@ -50,7 +50,7 @@ class ICornerTransactionLog:
                     (
                         "https://www.icorner.ch/services/bff/accounts/"
                         f"{os.environ['ICORNER_ACCOUNT']}"
-                        f"/transactions?page={page}&rows=100"
+                        f"/transactions?page={page}&rows=50"
                     )
                 )
                 r.raise_for_status()
