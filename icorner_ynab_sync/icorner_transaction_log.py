@@ -41,23 +41,29 @@ class ICornerTransactionLog:
         )
         self.logged_in = True
 
-    def yield_transactions(self, page: int = 1) -> None:
-        if not self.logged_in:
-            raise Exception("Not logged in")
+    def get_page_data(self, page: int) -> dict:
+        while True:
+            try:
+                if not self.logged_in:
+                    self.login()
+                r = self.session.get(
+                    (
+                        "https://www.icorner.ch/services/bff/accounts/"
+                        f"{os.environ['ICORNER_ACCOUNT']}"
+                        f"/transactions?page={page}&rows=100"
+                    )
+                )
+                r.raise_for_status()
+                return r.json()
+            except Exception as e:
+                print(e)
+                self.logged_in = False
 
+    def yield_transactions(self) -> None:
+        page = 1
         hasMore = True
         while hasMore:
-            r = self.session.get(
-                (
-                    "https://www.icorner.ch/services/bff/accounts/"
-                    f"{os.environ['ICORNER_ACCOUNT']}"
-                    f"/transactions?page={page}&rows=100"
-                )
-            )
-            r.raise_for_status()
-            data = r.json()
-
-            for transaction in data["transactions"]:
-                yield transaction
+            data = self.get_page_data(page)
+            yield from data["transactions"]
             hasMore = data["hasMore"]
             page += 1
