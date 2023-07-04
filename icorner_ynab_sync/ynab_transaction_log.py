@@ -1,34 +1,31 @@
 import os
 import requests
-from requests_ratelimiter import LimiterAdapter
+from requests_ratelimiter import LimiterSession
 
 
 class YNABTransactionLog:
     def __init__(self) -> None:
-        self.session = requests.Session()
+        self.session = LimiterSession(per_hour=199)
         self.budget_id = os.environ["YNAB_BUDGET_ID"]
         self.account_id = os.environ["YNAB_ACCOUNT_ID"]
         self.session.headers.update(
             {"Authorization": f"Bearer {os.environ['YNAB_API_KEY']}"}
         )
-        adapter = LimiterAdapter(
-            per_hour=150,
-            status_forcelist=[429],
-            allowed_methods=["GET", "POST", "PATCH"],
-        )
-        self.session.mount("https://", adapter)
-        self.session.mount("http://", adapter)
+
+    @property
+    def api_endpoint(self) -> str:
+        return f"https://api.ynab.com/v1/budgets/{self.budget_id}/transactions"
 
     def create_transaction(self, transaction: dict) -> None:
         r = self.session.post(
-            f"https://api.ynab.com/v1/budgets/{self.budget_id}/transactions",
+            self.api_endpoint,
             json={"transaction": transaction},
         )
         r.raise_for_status()
 
     def patch_transactions(self, transaction: dict) -> None:
         r = self.session.patch(
-            f"https://api.ynab.com/v1/budgets/{self.budget_id}/transactions",
+            self.api_endpoint,
             json={"transaction": transaction},
         )
         r.raise_for_status()
