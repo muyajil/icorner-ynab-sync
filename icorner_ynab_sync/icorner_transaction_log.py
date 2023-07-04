@@ -73,9 +73,6 @@ class ICornerTransactionLog:
                 if transaction["id"] not in ids:
                     ids.add(transaction["id"])
                     transactions.append(transaction)
-            transactions.extend(
-                data["transactions"]
-            )
             hasMore = data["hasMore"]
             page += 1
         yield from transactions
