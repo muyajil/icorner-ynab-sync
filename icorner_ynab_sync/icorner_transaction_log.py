@@ -62,8 +62,20 @@ class ICornerTransactionLog:
     def yield_transactions(self) -> None:
         page = 1
         hasMore = True
+        transactions = []
+        ids = set()
         while hasMore:
             data = self.get_page_data(page)
-            yield from data["transactions"]
+            # When we request a page currently
+            # the response contains all the transactions
+            # including those from previous pages.
+            for transaction in data["transactions"]:
+                if transaction["id"] not in ids:
+                    ids.add(transaction["id"])
+                    transactions.append(transaction)
+            transactions.extend(
+                data["transactions"]
+            )
             hasMore = data["hasMore"]
             page += 1
+        yield from transactions
