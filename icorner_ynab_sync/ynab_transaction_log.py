@@ -12,7 +12,7 @@ class YNABTransactionLog:
             {"Authorization": f"Bearer {os.environ['YNAB_API_KEY']}"}
         )
         adapter = LimiterAdapter(
-            per_hour=200,
+            per_hour=150,
             status_forcelist=[429],
             allowed_methods=["GET", "POST", "PATCH"],
         )
