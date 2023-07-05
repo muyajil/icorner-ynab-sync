@@ -48,7 +48,7 @@ class ICornerTransactionLog:
     def get_page_data(self, page: int) -> dict:
         while True:
             try:
-                if not self.logged_in:
+                while not self.logged_in:
                     self.login()
                 r = self.session.get(
                     (
@@ -79,6 +79,8 @@ class ICornerTransactionLog:
                     transactions.append(transaction)
             hasMore = data["hasMore"]
             page += 1
+            if self.limit and len(transactions) >= self.limit:
+                break
         if self.limit:
             yield from transactions[:self.limit]
         yield from transactions
