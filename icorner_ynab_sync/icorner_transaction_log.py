@@ -83,4 +83,5 @@ class ICornerTransactionLog:
                 break
         if self.limit:
             yield from transactions[:self.limit]
-        yield from transactions
+        else:
+            yield from transactions
