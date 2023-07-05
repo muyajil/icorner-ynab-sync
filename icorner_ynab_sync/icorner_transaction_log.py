@@ -14,6 +14,10 @@ class ICornerTransactionLog:
         self.token_manager = TokenManager()
         self.session = requests.Session()
         self.logged_in = False
+        if "LIMIT" in os.environ:
+            self.limit = int(os.environ["LIMIT"])
+        else:
+            self.limit = None
 
     def login(self) -> None:
         _ = self.session.post("https://www.icorner.ch/cop-ch/", data=self.login_data)
@@ -75,4 +79,6 @@ class ICornerTransactionLog:
                     transactions.append(transaction)
             hasMore = data["hasMore"]
             page += 1
+        if self.limit:
+            yield from transactions[:self.limit]
         yield from transactions

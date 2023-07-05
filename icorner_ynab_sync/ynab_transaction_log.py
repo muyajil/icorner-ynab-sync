@@ -5,7 +5,7 @@ from requests_ratelimiter import LimiterSession
 
 class YNABTransactionLog:
     def __init__(self) -> None:
-        self.session = LimiterSession(per_hour=199)
+        self.session = LimiterSession(per_hour=200)
         self.budget_id = os.environ["YNAB_BUDGET_ID"]
         self.account_id = os.environ["YNAB_ACCOUNT_ID"]
         self.session.headers.update(
