@@ -4,7 +4,7 @@ import requests
 from icorner_ynab_sync.token_manager import TokenManager
 
 
-class ICornerTransactionLog:
+class ICornerClient:
     def __init__(self):
         self.login_data = {
             "isiwebuserid": os.environ["ICORNER_USERNAME"],
