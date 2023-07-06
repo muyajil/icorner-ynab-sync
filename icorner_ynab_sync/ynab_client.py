@@ -68,6 +68,8 @@ class YNABClient:
             import_id = original_import_id + str(suffix)
             suffix += 1
 
+        self.used_import_ids.add(import_id)
+
         t = {
             "import_id": import_id,
             "date": datetime.strptime(transaction["date"], "%Y%m%d").strftime(
