@@ -2,6 +2,7 @@ import os
 import requests
 from requests_ratelimiter import LimiterSession
 from datetime import datetime
+import hashlib
 
 
 class YNABClient:
@@ -46,22 +47,25 @@ class YNABClient:
         )
         if "originalAmount" in transaction:
             import_id = (
-                "ico:v3:"
+                "ico:v4:"
                 + transaction["date"]
                 + ":"
-                + merchant[:5].lower()
+                + merchant.lower()
                 + ":"
                 + str(int(float(transaction["originalAmount"]) * 1000))
             )
         else:
             import_id = (
-                "ico:v3:"
+                "ico:v5:"
                 + transaction["date"]
                 + ":"
-                + merchant[:5].lower()
+                + merchant.lower()
                 + ":"
                 + str(amount)
             )
+
+        import_id = hashlib.sha1(bytes(import_id, 'utf-8')).hexdigest()
+        import_id = import_id[:30]
         suffix = 0
         original_import_id = import_id
         while import_id in self.used_import_ids:
