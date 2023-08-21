@@ -24,7 +24,11 @@ class YNABClient:
             self.api_endpoint,
             json={"transaction": transaction},
         )
-        r.raise_for_status()
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError:
+            print(r.json())
+            raise
 
     def patch_transactions(self, transaction: dict) -> None:
         r = self.session.patch(
