@@ -49,6 +49,8 @@ class YNABClient:
         merchant = (
             transaction["merchant"] if "merchant" in transaction else "Cornercard"
         )
+        # NOTE: merchant comes with location before its settled
+        merchant = merchant.split(",")[0]
         if "originalAmount" in transaction:
             import_id = (
                 "ico:v6:"
