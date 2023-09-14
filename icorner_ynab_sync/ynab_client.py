@@ -42,7 +42,15 @@ class YNABClient:
         try:
             self.patch_transactions(transaction)
         except requests.exceptions.HTTPError:
-            self.create_transaction(transaction)
+            suffix = 0
+            while True:
+                try:
+                    self.create_transaction(transaction)
+                    break
+                except requests.exceptions.HTTPError:
+                    transaction["import_id"] += str(suffix)
+                    suffix += 1
+                    self.used_import_ids.add(transaction["import_id"])
 
     def map_icorner_to_ynab(self, transaction: dict) -> str:
         amount = int(float(transaction["amount"]) * 1000)
@@ -53,7 +61,7 @@ class YNABClient:
         merchant = merchant.split(",")[0]
         if "originalAmount" in transaction:
             import_id = (
-                "ico:v7:"
+                "ico:v6:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
