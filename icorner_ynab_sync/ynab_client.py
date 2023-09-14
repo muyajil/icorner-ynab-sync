@@ -53,7 +53,7 @@ class YNABClient:
         merchant = merchant.split(",")[0]
         if "originalAmount" in transaction:
             import_id = (
-                "ico:v6:"
+                "ico:v7:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
