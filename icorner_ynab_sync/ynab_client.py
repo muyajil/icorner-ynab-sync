@@ -4,6 +4,8 @@ from requests_ratelimiter import LimiterSession
 from datetime import datetime
 import hashlib
 
+IMPORT_ID_VERSION = os.environ["IMPORT_ID_VERSION"]
+
 
 class YNABClient:
     def __init__(self) -> None:
@@ -61,7 +63,7 @@ class YNABClient:
         merchant = merchant.split(",")[0]
         if "originalAmount" in transaction:
             import_id = (
-                "ico:v6:"
+                f"ico:{IMPORT_ID_VERSION}:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
@@ -70,7 +72,7 @@ class YNABClient:
             )
         else:
             import_id = (
-                "ico:v6:"
+                f"ico:{IMPORT_ID_VERSION}:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
