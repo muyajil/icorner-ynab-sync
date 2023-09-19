@@ -4,8 +4,6 @@ from requests_ratelimiter import LimiterSession
 from datetime import datetime
 import hashlib
 
-IMPORT_ID_VERSION = os.environ["IMPORT_ID_VERSION"]
-
 
 class YNABClient:
     def __init__(self) -> None:
@@ -18,12 +16,24 @@ class YNABClient:
         self.used_import_ids = set()
 
     @property
-    def api_endpoint(self) -> str:
+    def transactions_endpoint(self) -> str:
         return f"https://api.ynab.com/v1/budgets/{self.budget_id}/transactions"
+
+    @property
+    def categories_endpoint(self) -> str:
+        return f"https://api.ynab.com/v1/budgets/{self.budget_id}/categories"
+
+    def get_available_amount(self, category_id) -> int:
+        return (
+            self.session.get(self.categories_endpoint + f"/{category_id}").json()[
+                "data"
+            ]["category"]["balance"]
+            / 1000
+        )
 
     def create_transaction(self, transaction: dict) -> None:
         r = self.session.post(
-            self.api_endpoint,
+            self.transactions_endpoint,
             json={"transaction": transaction},
         )
         try:
@@ -34,7 +44,7 @@ class YNABClient:
 
     def patch_transactions(self, transaction: dict) -> None:
         r = self.session.patch(
-            self.api_endpoint,
+            self.transactions_endpoint,
             json={"transaction": transaction},
         )
         r.raise_for_status()
@@ -59,11 +69,12 @@ class YNABClient:
         merchant = (
             transaction["merchant"] if "merchant" in transaction else "Cornercard"
         )
+        import_id_version = os.environ["IMPORT_ID_VERSION"]
         # NOTE: merchant comes with location before its settled
         merchant = merchant.split(",")[0]
         if "originalAmount" in transaction:
             import_id = (
-                f"ico:{IMPORT_ID_VERSION}:"
+                f"ico:{import_id_version}:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
@@ -72,7 +83,7 @@ class YNABClient:
             )
         else:
             import_id = (
-                f"ico:{IMPORT_ID_VERSION}:"
+                f"ico:{import_id_version}:"
                 + transaction["date"]
                 + ":"
                 + merchant.lower()
@@ -80,7 +91,7 @@ class YNABClient:
                 + str(amount)
             )
 
-        import_id = hashlib.sha1(bytes(import_id, 'utf-8')).hexdigest()
+        import_id = hashlib.sha1(bytes(import_id, "utf-8")).hexdigest()
         import_id = import_id[:30]
         suffix = 0
         original_import_id = import_id
