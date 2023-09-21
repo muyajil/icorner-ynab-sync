@@ -36,7 +36,7 @@ async def get_available_amount():
     <body>
     """
     for name, value in values:
-        html += f"<div>{name}:<br>{value}</div>"
+        html += f"<div>{name}:<br>CHF {value}</div>"
 
     return (
         html
