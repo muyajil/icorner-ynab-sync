@@ -32,7 +32,7 @@
                 "YNAB_BUDGET_ID": "f39375bc-b22d-4213-83a8-7f18d432c4da",
                 "YNAB_ACCOUNT_ID": "03708457-4e29-475e-a611-162acf06be50",
                 "YNAB_API_KEY": "eI7PgPQm8Qe3P3ie8bKpTqrHTz058Qfh7qZvsqO6ueo",
-                "AVAILABLE_CATEGORY_ID": "1fd6f7b6-c23c-4a01-b6ae-b6f629f3a059"
+                "CATEGORY_IDS": "1fd6f7b6-c23c-4a01-b6ae-b6f629f3a059,cfc76fff-8dcd-4f9a-8b3c-972255aa8ee6"
             }
         },
         

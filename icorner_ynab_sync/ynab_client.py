@@ -31,6 +31,14 @@ class YNABClient:
             / 1000
         )
 
+    def get_categories(self) -> list:
+        groups = self.session.get(self.categories_endpoint).json()["data"]["category_groups"]
+        categories = []
+        for group in groups:
+            for category in group["categories"]:
+                categories.append(category)
+        return categories
+
     def create_transaction(self, transaction: dict) -> None:
         r = self.session.post(
             self.transactions_endpoint,

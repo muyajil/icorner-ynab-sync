@@ -9,16 +9,17 @@ app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
 async def get_available_amount():
-    category_id = os.environ["AVAILABLE_CATEGORY_ID"]
-    available = YNABClient().get_available_amount(category_id)
-    if available > 500:
-        color = '#79AC78'
-    else:
-        color = '#EF9595'
+    category_ids = set(os.environ["CATEGORY_IDS"].split(","))
+    categories = YNABClient().get_categories()
+    values = []
+    for category in categories:
+        if category["id"] in category_ids:
+            available = category["balance"] / 1000
+            values.append((category["name"], "{:,.0f}".format(available)))
 
-    formatted = '{:,.0f}'.format(available)
+    color = "#79AC78"
 
-    return f'''
+    html = f"""
     <html>
     <head>
         <style>
@@ -33,7 +34,14 @@ async def get_available_amount():
         </style>
     </head>
     <body>
-        Available for Wants:<br>CHF {formatted}
+    """
+    for name, value in values:
+        html += f"<div>{name}:<br>{value}</div>"
+
+    return (
+        html
+        + """
     </body>
     </html>
-    '''
+    """
+    )
