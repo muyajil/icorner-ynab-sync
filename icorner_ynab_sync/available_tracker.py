@@ -17,7 +17,7 @@ async def get_available_amount():
             available = category["balance"] / 1000
             values.append((category["name"], "{:,.0f}".format(available)))
 
-    color = "#79AC78"
+    color = "#3b5e1a"
 
     html = f"""
     <html>

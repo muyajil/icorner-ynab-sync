@@ -32,7 +32,9 @@ class YNABClient:
         )
 
     def get_categories(self) -> list:
-        groups = self.session.get(self.categories_endpoint).json()["data"]["category_groups"]
+        groups = self.session.get(self.categories_endpoint).json()["data"][
+            "category_groups"
+        ]
         categories = []
         for group in groups:
             for category in group["categories"]:
@@ -62,15 +64,16 @@ class YNABClient:
         try:
             self.patch_transactions(transaction)
         except requests.exceptions.HTTPError:
-            suffix = 0
-            while True:
-                try:
-                    self.create_transaction(transaction)
-                    break
-                except requests.exceptions.HTTPError:
-                    transaction["import_id"] += str(suffix)
-                    suffix += 1
-                    self.used_import_ids.add(transaction["import_id"])
+            # Transaction does not exist or was deleted
+            try:
+                self.create_transaction(transaction)
+            except requests.exceptions.HTTPError:
+                # Transaction was deleted before
+                transaction["import_id"] = hashlib.sha1(
+                    bytes(transaction["import_id"] + "RESTORED", "utf-8")
+                ).hexdigest()[:30]
+                self.create_transaction(transaction)
+                self.used_import_ids.add(transaction["import_id"])
 
     def map_icorner_to_ynab(self, transaction: dict) -> str:
         amount = int(float(transaction["amount"]) * 1000)
