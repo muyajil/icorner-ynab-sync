@@ -72,7 +72,7 @@ class YNABClient:
                 transaction["import_id"] = hashlib.sha1(
                     bytes(transaction["import_id"] + "RESTORED", "utf-8")
                 ).hexdigest()[:30]
-                self.create_transaction(transaction)
+                self.update_or_create(transaction)
                 self.used_import_ids.add(transaction["import_id"])
 
     def map_icorner_to_ynab(self, transaction: dict) -> str:
