@@ -3,6 +3,7 @@ import requests
 from requests_ratelimiter import LimiterSession
 from datetime import datetime
 import hashlib
+from forex_python.converter import CurrencyRates
 
 
 class YNABClient:
@@ -14,6 +15,7 @@ class YNABClient:
             {"Authorization": f"Bearer {os.environ['YNAB_API_KEY']}"}
         )
         self.used_import_ids = set()
+        self.currency_rates = CurrencyRates()
 
     @property
     def transactions_endpoint(self) -> str:
@@ -125,6 +127,9 @@ class YNABClient:
             t["cleared"] = "cleared"
         if transaction["currency"] != "CHF":
             t["memo"] = f"Currency: {transaction['currency']}"
+            t["amount"] = -int(self.currency_rates.convert(
+                transaction["currency"], "CHF", amount
+            ))
         if "originalAmount" in transaction:
             t[
                 "memo"
