@@ -127,9 +127,12 @@ class YNABClient:
             t["cleared"] = "cleared"
         if transaction["currency"] != "CHF":
             t["memo"] = f"Currency: {transaction['currency']}"
-            t["amount"] = -int(self.currency_rates.convert(
-                transaction["currency"], "CHF", amount
-            ))
+            try:
+                t["amount"] = -int(self.currency_rates.convert(
+                    transaction["currency"], "CHF", amount
+                ))
+            except Exception:
+                pass
         if "originalAmount" in transaction:
             t[
                 "memo"
